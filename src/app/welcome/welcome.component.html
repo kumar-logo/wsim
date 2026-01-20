@@ -1,0 +1,146 @@
+<div class="main-layout font-inter bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900">
+
+  <!-- Header -->
+  <header class="fixed top-0 w-full bg-white/95 backdrop-blur border-b border-black/10 z-50">
+    <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between px-6 py-4 gap-4">
+      <img src="assets/images/logos/logo.png" alt="WSIM Logo" class="h-11" />
+
+      <a routerLink="/auth/login"
+        class="inline-flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-white
+               bg-gradient-to-r from-violet-600 to-violet-700
+               shadow-lg shadow-violet-600/20
+               hover:-translate-y-0.5 hover:shadow-violet-600/30 transition"
+      >
+        Login
+        <i class="fas fa-arrow-right text-sm"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="pt-28">
+    <div class="max-w-[1400px] mx-auto px-6">
+
+      <!-- Hero -->
+      <section class="text-center py-16">
+        <h1 class="font-playfair font-extrabold text-4xl md:text-6xl leading-tight mb-4">
+          Wall Street Investment
+          <span class="bg-gradient-to-r from-violet-600 to-violet-700 bg-clip-text text-transparent">
+            Management Excellence
+          </span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-gray-600 text-lg">
+          Professional financial advisory services combining cutting-edge technology
+          with proven investment strategies for U.S. and Indian markets
+        </p>
+      </section>
+
+      <!-- Services -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-12">
+
+        <div
+          *ngFor="let service of services"
+          class="bg-white border rounded-2xl p-8 hover:-translate-y-2 transition shadow-sm hover:shadow-xl"
+        >
+          <div
+            class="w-14 h-14 mb-6 rounded-xl flex items-center justify-center text-white"
+            [ngClass]="service.iconBg"
+          >
+            <i [class]="service.icon + ' text-xl'"></i>
+          </div>
+
+          <h3 class="font-bold text-lg mb-2">{{ service.title }}</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            {{ service.description }}
+          </p>
+
+          <a
+            [href]="service.link"
+            target="_blank"
+            class="inline-flex items-center gap-2 font-semibold hover:gap-3 transition"
+            [ngClass]="service.linkColor"
+          >
+            Learn More <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+      </section>
+
+      <!-- Contact -->
+      <section class="bg-white border rounded-3xl p-10 my-16 shadow-sm">
+        <div class="text-center mb-12">
+          <h2 class="font-playfair text-3xl font-bold mb-2">Get In Touch</h2>
+          <p class="text-gray-600">
+            We're here to help you achieve your investment goals
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-10">
+
+          <!-- Info -->
+          <div class="space-y-6">
+
+            <div class="flex gap-4 p-6 rounded-xl bg-violet-50 border border-violet-100">
+              <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-600 to-violet-700 text-white flex items-center justify-center">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <h3 class="font-bold">Phone</h3>
+                <p class="text-gray-600 text-sm">US: +1-703-728-3380</p>
+                <p class="text-gray-600 text-sm">India: +91-95662-28832</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 p-6 rounded-xl bg-violet-50 border border-violet-100">
+              <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-600 to-violet-700 text-white flex items-center justify-center">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h3 class="font-bold">Email</h3>
+                <p class="text-gray-600 text-sm">info&#64;wsimusa.com</p>
+                <p class="text-gray-600 text-sm">support&#64;wallstim.com</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Form -->
+          <form class="bg-gray-50 border rounded-xl p-8 space-y-4">
+            <input class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none" placeholder="Your Name" />
+            <input class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none" placeholder="Your Email" />
+            <input class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none" placeholder="Phone Number" />
+            <textarea class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none h-32" placeholder="Your Message"></textarea>
+
+            <button
+              type="submit"
+              class="w-full py-3 font-bold text-white rounded-lg
+                     bg-gradient-to-r from-violet-600 to-violet-700
+                     hover:-translate-y-0.5 transition shadow-lg shadow-violet-600/20"
+            >
+              Send Message
+            </button>
+          </form>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t bg-white">
+    <div class="max-w-[1400px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <p class="text-gray-600 text-sm">
+        © 2025 Wall Street Investment Management
+      </p>
+
+      <div class="flex gap-4">
+        <a class="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-violet-600 hover:text-white transition" href="#"><i class="fab fa-facebook-f"></i></a>
+        <a class="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-violet-600 hover:text-white transition" href="#"><i class="fab fa-twitter"></i></a>
+        <a class="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-violet-600 hover:text-white transition" href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a class="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-violet-600 hover:text-white transition" href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</div>

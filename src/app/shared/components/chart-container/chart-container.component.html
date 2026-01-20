@@ -1,0 +1,6 @@
+<div class="card p-6">
+  <h3 *ngIf="title" class="text-lg font-semibold text-slate-900 dark:text-white mb-4">{{ title }}</h3>
+  <div class="relative" [style.height]="height">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>

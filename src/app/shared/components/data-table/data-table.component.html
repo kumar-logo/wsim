@@ -1,0 +1,16 @@
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th *ngFor="let column of columns">{{ column.label }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of paginatedData">
+          <td *ngFor="let column of columns">{{ row[column.key] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="flex flex-col sm:flex-row gap-3">
+  <div class="flex-1">
+    <label class="label">{{ startLabel }}</label>
+    <input type="date" [ngModel]="startDateStr" (ngModelChange)="onStartDateChange($event)" class="input">
+  </div>
+  <div class="flex-1">
+    <label class="label">{{ endLabel }}</label>
+    <input type="date" [ngModel]="endDateStr" (ngModelChange)="onEndDateChange($event)" class="input">
+  </div>
+</div>

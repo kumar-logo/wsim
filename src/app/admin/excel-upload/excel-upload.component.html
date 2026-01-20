@@ -1,0 +1,467 @@
+<!-- Excel Upload Wizard with Glassmorphism -->
+<div class="min-h-screen relative">
+  <!-- Background Effects -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto space-y-8 animate-fadeIn">
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 via-emerald-800 to-slate-900 dark:from-white dark:via-emerald-300 dark:to-white bg-clip-text text-transparent">
+        Excel Data Upload
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-2">Import client data from Excel or CSV files</p>
+    </div>
+
+    <!-- Progress Stepper -->
+    <div class="relative overflow-hidden rounded-2xl backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 border border-white/20 dark:border-slate-700/50 p-6 shadow-xl">
+      <div class="flex items-center justify-between">
+        @for (step of steps; track step.id; let i = $index; let last = $last) {
+          <div class="flex items-center" [class.flex-1]="!last">
+            <!-- Step Circle -->
+            <div class="relative">
+              <button 
+                (click)="goToStep(step.id)"
+                [disabled]="step.id > currentStep()"
+                class="relative z-10 flex items-center justify-center w-14 h-14 rounded-2xl font-bold transition-all duration-500"
+                [ngClass]="{
+                  'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/40 scale-110': currentStep() === step.id,
+                  'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30': currentStep() > step.id,
+                  'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500': currentStep() < step.id
+                }">
+                @if (currentStep() > step.id) {
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else {
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="step.icon"></path>
+                  </svg>
+                }
+              </button>
+              
+              <!-- Pulse Animation for Active -->
+              @if (currentStep() === step.id) {
+                <div class="absolute inset-0 rounded-2xl bg-emerald-500/30 animate-ping"></div>
+              }
+            </div>
+            
+            <!-- Step Info -->
+            <div class="ml-4 hidden md:block">
+              <p class="text-sm font-bold" [ngClass]="currentStep() >= step.id ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'">
+                {{ step.title }}
+              </p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">{{ step.description }}</p>
+            </div>
+            
+            <!-- Connector Line -->
+            @if (!last) {
+              <div class="flex-1 mx-6 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden hidden md:block">
+                <div 
+                  class="h-full bg-gradient-to-r from-emerald-500 to-green-600 transition-all duration-700 ease-out"
+                  [style.width.%]="currentStep() > step.id ? 100 : currentStep() === step.id ? 50 : 0"></div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="relative overflow-hidden rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 border border-white/20 dark:border-slate-700/50 shadow-xl">
+      
+      <!-- Step 1: File Selection -->
+      @if (currentStep() === 1) {
+        <div class="p-8 animate-fadeIn">
+          <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-xl shadow-emerald-500/30 mb-4">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Upload Your File</h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Drag and drop or click to select</p>
+          </div>
+
+          @if (!selectedFile()) {
+            <!-- Drop Zone -->
+            <div 
+              class="relative border-2 border-dashed rounded-2xl p-12 transition-all duration-300 cursor-pointer group"
+              [ngClass]="{
+                'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20': isDragOver(),
+                'border-slate-300 dark:border-slate-600 hover:border-emerald-500 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10': !isDragOver()
+              }"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop($event)"
+              (click)="fileInput.click()">
+              
+              <input 
+                #fileInput
+                type="file"
+                [accept]="acceptedFileTypes"
+                (change)="onFileSelect($event)"
+                class="hidden">
+              
+              <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-8 h-8 text-slate-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <p class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Drop your file here, or <span class="text-emerald-600 dark:text-emerald-400">browse</span>
+                </p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Supports: Excel (.xlsx, .xls) and CSV files up to 10MB
+                </p>
+              </div>
+            </div>
+          } @else {
+            <!-- Selected File -->
+            <div class="relative rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-6 border border-slate-200 dark:border-slate-700">
+              @if (isProcessing()) {
+                <div class="absolute inset-0 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="w-12 h-12 border-4 border-emerald-200 dark:border-emerald-800 border-t-emerald-600 dark:border-t-emerald-400 rounded-full animate-spin mx-auto mb-3"></div>
+                    <p class="text-slate-600 dark:text-slate-400">Processing file...</p>
+                  </div>
+                </div>
+              }
+              
+              <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-slate-900 dark:text-white truncate">{{ selectedFile()!.name }}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">{{ formatFileSize(selectedFile()!.size) }}</p>
+                </div>
+                <button 
+                  (click)="removeFile()"
+                  class="p-3 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-600 transition-all">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              @if (sheets().length > 0) {
+                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <p class="text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    File ready! Found {{ sheets().length }} sheet(s) with {{ sheets()[0].rowCount }} rows
+                  </p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Step 2: Sheet Preview -->
+      @if (currentStep() === 2) {
+        <div class="animate-fadeIn">
+          <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Preview Data</h2>
+                <p class="text-slate-500 dark:text-slate-400">Review the data before mapping columns</p>
+              </div>
+              
+              @if (sheets().length > 1) {
+                <select 
+                  [ngModel]="selectedSheetIndex()"
+                  (ngModelChange)="selectedSheetIndex.set($event)"
+                  class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white">
+                  @for (sheet of sheets(); track sheet.name; let i = $index) {
+                    <option [value]="i">{{ sheet.name }}</option>
+                  }
+                </select>
+              }
+            </div>
+          </div>
+          
+          @if (selectedSheet()) {
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-slate-50/50 dark:bg-slate-900/30">
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 w-12">#</th>
+                    @for (header of selectedSheet()!.headers; track header) {
+                      <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ header }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50">
+                  @for (row of selectedSheet()!.rows; track row; let i = $index) {
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                      <td class="px-4 py-3 text-sm text-slate-400 font-mono">{{ i + 1 }}</td>
+                      @for (cell of row; track $index) {
+                        <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">{{ cell }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="p-4 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200/50 dark:border-slate-700/50">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Showing {{ selectedSheet()!.rows.length }} of {{ selectedSheet()!.rowCount }} rows
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Step 3: Column Mapping -->
+      @if (currentStep() === 3) {
+        <div class="p-8 animate-fadeIn">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Map Columns</h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Match your file columns to system fields</p>
+          </div>
+
+          <div class="space-y-4">
+            @for (mapping of columnMappings(); track mapping.sourceColumn; let i = $index) {
+              <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-700/50">
+                <!-- Source Column -->
+                <div class="flex-1">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Source Column</p>
+                  <p class="font-semibold text-slate-900 dark:text-white">{{ mapping.sourceColumn }}</p>
+                </div>
+                
+                <!-- Arrow -->
+                <div class="w-12 flex justify-center">
+                  <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                  </svg>
+                </div>
+                
+                <!-- Target Field -->
+                <div class="flex-1">
+                  <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                    Map To
+                    @if (mapping.required) {
+                      <span class="text-red-500">*</span>
+                    }
+                  </p>
+                  <select 
+                    [ngModel]="mapping.targetField"
+                    (ngModelChange)="updateMapping(i, $event)"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none transition-all text-slate-900 dark:text-white">
+                    <option value="">-- Skip this column --</option>
+                    @for (field of targetFields; track field.name) {
+                      <option [value]="field.name">
+                        {{ field.label }}
+                        @if (field.required) { * }
+                      </option>
+                    }
+                  </select>
+                </div>
+                
+                <!-- Status -->
+                <div class="w-12 flex justify-center">
+                  @if (mapping.mapped) {
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                      <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </div>
+                  } @else {
+                    <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                      </svg>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+          
+          <!-- Required Fields Warning -->
+          @if (!canProceed()) {
+            <div class="mt-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+              <p class="text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Please map all required fields (marked with *) to continue
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Step 4: Validation -->
+      @if (currentStep() === 4) {
+        <div class="p-8 animate-fadeIn">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Validation Results</h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Review data quality before upload</p>
+          </div>
+
+          @if (isValidating()) {
+            <div class="text-center py-12">
+              <div class="w-16 h-16 border-4 border-emerald-200 dark:border-emerald-800 border-t-emerald-600 dark:border-t-emerald-400 rounded-full animate-spin mx-auto mb-4"></div>
+              <p class="text-slate-600 dark:text-slate-400">Validating data...</p>
+            </div>
+          } @else {
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+              <div class="p-5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-center">
+                <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{{ sheets()[0] ? sheets()[0].rowCount: 0 }}</p>
+                <p class="text-sm text-emerald-700 dark:text-emerald-300">Total Records</p>
+              </div>
+              <div class="p-5 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-center">
+                <p class="text-3xl font-bold text-red-600 dark:text-red-400">{{ validationErrors().length }}</p>
+                <p class="text-sm text-red-700 dark:text-red-300">Errors</p>
+              </div>
+              <div class="p-5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-center">
+                <p class="text-3xl font-bold text-amber-600 dark:text-amber-400">{{ validationWarnings().length }}</p>
+                <p class="text-sm text-amber-700 dark:text-amber-300">Warnings</p>
+              </div>
+            </div>
+
+            @if (validationErrors().length === 0 && validationWarnings().length === 0) {
+              <div class="text-center py-8">
+                <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                  <svg class="w-10 h-10 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <p class="text-lg font-semibold text-slate-900 dark:text-white">All data is valid!</p>
+                <p class="text-slate-500 dark:text-slate-400">Ready to proceed with upload</p>
+              </div>
+            }
+
+            @if (validationWarnings().length > 0) {
+              <div class="space-y-3">
+                <h3 class="font-semibold text-amber-800 dark:text-amber-300">Warnings</h3>
+                @for (warning of validationWarnings(); track $index) {
+                  <div class="p-4 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-800/50">
+                    <p class="text-amber-800 dark:text-amber-300">
+                      <span class="font-medium">Row {{ warning.row }}, {{ warning.column }}:</span> {{ warning.message }}
+                    </p>
+                  </div>
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- Step 5: Complete -->
+      @if (currentStep() === 5) {
+        <div class="p-8 animate-fadeIn">
+          @if (uploadProgress() < 100) {
+            <!-- Upload Progress -->
+            <div class="text-center py-8">
+              <div class="w-24 h-24 mx-auto mb-6 relative">
+                <svg class="w-24 h-24 transform -rotate-90">
+                  <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="none" class="text-slate-200 dark:text-slate-700"/>
+                  <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="none" 
+                    class="text-emerald-500"
+                    [attr.stroke-dasharray]="251.2"
+                    [attr.stroke-dashoffset]="251.2 - (251.2 * uploadProgress() / 100)"
+                    stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ uploadProgress() }}%</span>
+                </div>
+              </div>
+              <p class="text-lg font-semibold text-slate-900 dark:text-white">Uploading data...</p>
+              <p class="text-slate-500 dark:text-slate-400">Please wait while we process your file</p>
+            </div>
+          } @else {
+            <!-- Success -->
+            <div class="text-center py-8">
+              <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-xl shadow-emerald-500/40 mb-6 animate-bounce">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Upload Complete!</h2>
+              <p class="text-slate-500 dark:text-slate-400 mb-8">Your data has been successfully imported</p>
+              
+              <!-- Results Summary -->
+              <div class="grid grid-cols-4 gap-4 mb-8">
+                <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800">
+                  <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ uploadResults().total }}</p>
+                  <p class="text-sm text-slate-500">Total</p>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30">
+                  <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ uploadResults().success }}</p>
+                  <p class="text-sm text-emerald-700 dark:text-emerald-300">Success</p>
+                </div>
+                <div class="p-4 rounded-xl bg-red-100 dark:bg-red-900/30">
+                  <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ uploadResults().failed }}</p>
+                  <p class="text-sm text-red-700 dark:text-red-300">Failed</p>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-100 dark:bg-amber-900/30">
+                  <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ uploadResults().skipped }}</p>
+                  <p class="text-sm text-amber-700 dark:text-amber-300">Skipped</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-center gap-4">
+                <button 
+                  (click)="startNewUpload()"
+                  class="px-6 py-3 rounded-xl font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                  Upload Another File
+                </button>
+                <a routerLink="/admin/clients" 
+                   class="px-6 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-emerald-600 to-green-600 shadow-lg shadow-emerald-500/30 hover:shadow-xl transition-all">
+                  View Clients
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Navigation -->
+      @if (currentStep() < 5) {
+        <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
+          <button 
+            (click)="prevStep()"
+            [disabled]="currentStep() === 1"
+            class="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Previous
+          </button>
+          
+          <button 
+            (click)="nextStep()"
+            [disabled]="!canProceed()"
+            class="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-medium shadow-lg shadow-emerald-500/30 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            @if (currentStep() === 4) {
+              Start Upload
+            } @else {
+              Continue
+            }
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+</style>

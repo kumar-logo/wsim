@@ -1,0 +1,320 @@
+<!-- System Settings with Glassmorphism Design -->
+<div class="min-h-screen relative">
+  <!-- Background Effects -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto space-y-6 animate-fadeIn">
+    <!-- Header -->
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+        System Settings
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-1">Configure your application preferences</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Sidebar Navigation -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-6 space-y-2">
+          @for (tab of tabs; track tab.id) {
+            <button 
+              (click)="setActiveTab(tab.id)"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 text-left"
+              [ngClass]="{
+                'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-lg shadow-indigo-500/10': activeTab() === tab.id,
+                'text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50': activeTab() !== tab.id
+              }">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tab.icon"></path>
+              </svg>
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Settings Content -->
+      <div class="lg:col-span-3">
+        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+          <div class="relative overflow-hidden rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 border border-white/20 dark:border-slate-700/50 shadow-xl">
+            
+            <!-- General Settings -->
+            @if (activeTab() === 'general') {
+              <div class="p-8 animate-fadeIn">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">General Settings</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Basic company information</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Company Name</label>
+                    <input type="text" formControlName="companyName"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Company Email</label>
+                    <input type="email" formControlName="companyEmail"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Support Email</label>
+                    <input type="email" formControlName="supportEmail"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number</label>
+                    <input type="tel" formControlName="phoneNumber"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Display Settings -->
+            @if (activeTab() === 'display') {
+              <div class="p-8 animate-fadeIn">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Display Settings</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Customize the appearance</p>
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <!-- Theme Selection -->
+                  <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Theme</label>
+                    <div class="grid grid-cols-3 gap-3">
+                      @for (theme of ['light', 'dark', 'system']; track theme) {
+                        <label class="relative flex flex-col items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border-2"
+                          [ngClass]="{
+                            'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30': settingsForm.get('theme')?.value === theme,
+                            'border-slate-200 dark:border-slate-700 hover:border-slate-300': settingsForm.get('theme')?.value !== theme
+                          }">
+                          <input type="radio" formControlName="theme" [value]="theme" class="sr-only">
+                          @if (theme === 'light') {
+                            <svg class="w-8 h-8 mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                          } @else if (theme === 'dark') {
+                            <svg class="w-8 h-8 mb-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                            </svg>
+                          } @else {
+                            <svg class="w-8 h-8 mb-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                          }
+                          <span class="font-medium capitalize text-slate-700 dark:text-slate-300">{{ theme }}</span>
+                        </label>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Toggle Options -->
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50/50 dark:bg-slate-900/30">
+                      <div>
+                        <p class="font-medium text-slate-900 dark:text-white">Compact Mode</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Reduce spacing and padding</p>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" formControlName="compactMode" class="sr-only peer">
+                        <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                      </label>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50/50 dark:bg-slate-900/30">
+                      <div>
+                        <p class="font-medium text-slate-900 dark:text-white">Show Animations</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Enable UI animations and transitions</p>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" formControlName="showAnimations" class="sr-only peer">
+                        <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Localization Settings -->
+            @if (activeTab() === 'localization') {
+              <div class="p-8 animate-fadeIn">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Localization</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Regional and language settings</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Timezone</label>
+                    <select formControlName="timezone"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                      @for (tz of timezones; track tz) {
+                        <option [value]="tz">{{ tz }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Currency</label>
+                    <select formControlName="currency"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                      @for (c of currencies; track c) {
+                        <option [value]="c">{{ c }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Date Format</label>
+                    <select formControlName="dateFormat"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                      @for (df of dateFormats; track df) {
+                        <option [value]="df">{{ df }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Language</label>
+                    <select formControlName="language"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-white">
+                      @for (lang of languages; track lang) {
+                        <option [value]="lang">{{ lang }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Integrations -->
+            @if (activeTab() === 'integrations') {
+              <div class="p-8 animate-fadeIn">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Integrations</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Connect external services</p>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between p-5 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-medium text-slate-900 dark:text-white">Email Notifications</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Send email alerts for important events</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" formControlName="enableEmailNotifications" class="sr-only peer">
+                      <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                  </div>
+
+                  <div class="flex items-center justify-between p-5 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-medium text-slate-900 dark:text-white">Slack Integration</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Receive notifications in Slack</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" formControlName="enableSlackIntegration" class="sr-only peer">
+                      <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                  </div>
+
+                  <div class="flex items-center justify-between p-5 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-medium text-slate-900 dark:text-white">API Access</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Enable REST API for integrations</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" formControlName="enableApiAccess" class="sr-only peer">
+                      <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Form Actions -->
+            <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
+              <button type="button" (click)="resetToDefaults()"
+                class="px-6 py-3 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition-all">
+                Reset to Defaults
+              </button>
+              <button type="submit" [disabled]="isSaving()"
+                class="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/30 disabled:opacity-50 transition-all">
+                @if (isSaving()) {
+                  <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                  Saving...
+                } @else {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Save Settings
+                }
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+</style>

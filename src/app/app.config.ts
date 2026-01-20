@@ -1,18 +1,26 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { routes } from './app-routing.module';
-import { authInterceptor } from '@core/interceptors/auth.interceptor';
-import { errorInterceptor } from '@core/interceptors/error.interceptor';
-import { loadingInterceptor } from '@core/interceptors/loading.interceptor';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from './app.component';
+import { AuthInterceptor } from './auth.interceptor';
 
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideRouter(routes, withViewTransitions()),
-    provideHttpClient(
-      withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])
-    ),
-    provideAnimations()
-  ]
-};
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    RouterModule.forRoot([]),
+    BrowserAnimationsModule
+  ],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
